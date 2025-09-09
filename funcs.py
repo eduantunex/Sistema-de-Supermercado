@@ -167,11 +167,74 @@ def view_prods():
         print(Fore.YELLOW + "Você não tem produtos registrados no seu banco de dados!")
         time.sleep(1)
         return
-    print(Fore.BLUE + "Seus Produtos (digite 0 para sair):")
+    print(Fore.BLUE + "- Seus Produtos (digite 0 para sair):\n")
     print(Fore.GREEN + f'{"NOME":<30} || {"VALOR":<15} || {"QUANTIDADE":<10}')
     print(Fore.GREEN + "-"*65)
     for nome, quantidade, valor in db:
-        print(Fore.GREEN + f" {nome:<30}|| {valor:<15} || {quantidade:<10}")
+        print(Fore.GREEN + f"{nome:<30} || {valor:<15} || {quantidade:<10}")
     prompt = input(">>> ")
     if prompt == "0":
         return
+
+def reg_venda():
+    while True:
+        os.system(clear)
+        titulo()
+        print(Fore.BLUE + "Digite um nome do produto que deseja vender:")
+        in_produto = input(">>> ")
+        db_produto = cursor.execute("SELECT nome FROM produtos WHERE nome = ?", (in_produto,)).fetchone()
+        if not db_produto:
+            os.system(clear)
+            titulo()
+            print(Fore.YELLOW + "Este produto não existe!")
+            time.sleep(1)
+        else:
+            break
+    while True:
+        print(Fore.BLUE + "Digite a quantidade vendida:")
+        in_quantidade = int(input(">>> "))
+        db_quantidade = cursor.execute("SELECT quantidade FROM produtos WHERE nome = ?", (in_produto,)).fetchone()
+        if db_quantidade[0] < in_quantidade:
+            os.system(clear)
+            titulo()
+            print(Fore.YELLOW + "Você não tem isso de estoque!!")
+            time.sleep(1)
+        elif in_quantidade < 1:
+            os.system(clear)
+            titulo()
+            print(Fore.YELLOW + "Insira um valor acima de 0!")
+            time.sleep(1)
+        else:
+            break
+    while True:
+        print(Fore.BLUE + "Digite o valor que você vendeu cada produto:")
+        in_valorun = input(">>> ")
+        if in_valorun < 0:
+            os.system(clear)
+            titulo()
+            print(Fore.YELLOW + "Digite um valor igual ou acima de 0!")
+            time.sleep(1)
+        else:
+            break
+    data = time.strftime("%d/%m/%Y")
+    hora = time.strftime("%H:%M:%S")
+    valor_total = in_quantidade*in_valorun
+    cursor.execute("INSERT INTO vendas (nome, quantidade, valor, data, hora) VALUES (?,?,?,?,?)", (in_produto, in_quantidade, valor_total, data, hora,))
+    conn.commit()
+
+def view_vendas():
+    os.system(clear)
+    titulo()
+    db_ = cursor.execute("SELECT nome, quantidade, valor, data, hora FROM vendas").fetchone()
+    if not db_:
+        os.system(clear)
+        titulo()
+        print(Fore.YELLOW + "Você não tem vendas registradas!")
+        time.sleep(1)
+    else:
+        os.system(clear)
+        titulo()
+        print(Fore.BLUE(f"{"NOME":<30}|| {"QTD":<10}|| {"VALOR UNIDADE":<10}|| {"VALOR TOTAL":<10}|| {"DATA":<10}|| {"HORA":<6}"))
+        for nome, quantidade, valor, data, hora in db_:
+            print(Fore.BLUE + f"{nome:<30}|| {quantidade:<10}|| {"R$"+valor/quantidade:<10}|| {"R$"+valor:<10}|| {data:<10}|| {hora:<6}")
+        prompt = input(">>>")
