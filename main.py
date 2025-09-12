@@ -57,3 +57,4 @@ while True:
     else:
         print(Fore.YELLOW + "Escreva uma opção correta...")
         time.sleep(1)
+        
