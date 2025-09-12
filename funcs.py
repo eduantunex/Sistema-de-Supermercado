@@ -225,7 +225,7 @@ def reg_venda():
 def view_vendas():
     os.system(clear)
     titulo()
-    db_ = cursor.execute("SELECT nome, quantidade, valor, data, hora FROM vendas").fetchone()
+    db_ = cursor.execute("SELECT nome, quantidade, valor, data, hora FROM vendas").fetchall()
     if not db_:
         os.system(clear)
         titulo()
@@ -236,5 +236,5 @@ def view_vendas():
         titulo()
         print(Fore.BLUE(f"{"NOME":<30}|| {"QTD":<10}|| {"VALOR UNIDADE":<10}|| {"VALOR TOTAL":<10}|| {"DATA":<10}|| {"HORA":<6}"))
         for nome, quantidade, valor, data, hora in db_:
-            print(Fore.BLUE + f"{nome:<30}|| {quantidade:<10}|| {"R$"+valor/quantidade:<10}|| {"R$"+valor:<10}|| {data:<10}|| {hora:<6}")
+            print(Fore.BLUE + f"{nome:<30}|| {quantidade:<10}|| {'R$'+valor/quantidade:<10}|| {'R$'+valor:<10}|| {data:<10}|| {hora:<6}")
         prompt = input(">>>")
